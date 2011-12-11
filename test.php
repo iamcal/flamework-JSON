@@ -17,8 +17,13 @@
 
 			# missing values in arrays
 			$this->checkDeep('[,2]', array(null,2));
-			$this->checkDeep('[1,]', array(1,null));
+			$this->checkDeep('[1,]', array(1));
 			$this->checkDeep('[1,,2]', array(1,null,2));
+
+			# missing values in hashes
+			$this->checkDeep('{,"a":2}', array('a' => 2));
+			$this->checkDeep('{"a":1, , "b":2}', array('a' => 1, 'b' => 2));
+			$this->checkDeep('{"a":1, "b":2 , }', array('a' => 1, 'b' => 2));
 
 			# correctly double quoted strings
 			$this->checkDeep('{"foo":"bar \' baz"}', array("foo" => "bar ' baz"));

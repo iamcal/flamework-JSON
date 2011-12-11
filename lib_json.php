@@ -32,13 +32,21 @@
 #echo "POST-FIND: $json\n";
 #print_r($GLOBALS['json_strings']);
 
+		$json = preg_replace('!\s+!', '', $json);
+
+
 		#
 		# missing elements
 		#
 
-		$json = str_replace(',,', ',null,', $json);
 		$json = str_replace('[,', '[null,', $json);
-		$json = str_replace(',]', ',null]', $json);
+		$json = str_replace('{,', '{', $json);
+
+		$json = str_replace(',]', ']', $json);
+		$json = str_replace(',}', '}', $json);
+
+		$json = preg_replace('!\[([^[{]+),(\s*),!', '[$1,null,', $json);
+		$json = preg_replace('!\{([^[{]+),(\s*),!', '{$1,', $json);
 
 
 		#
