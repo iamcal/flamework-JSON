@@ -7,6 +7,9 @@ The built-in PHP JSON decoder is very strict, and will not accept things which a
 * escaped single quoted, e.g. {"foo": "b\'ar"}
 * empty array elements, e.g. [1,,2]
 
+This library allows you to decode JavaScript objects as if they were valid JSON.
+
+
 ## Usage
 
     include('lib_json.php');
