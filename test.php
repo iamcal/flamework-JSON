@@ -1,45 +1,28 @@
 <?
-	require_once(dirname(__FILE__) . '/simpletest/autorun.php');
-
+	include('testmore.php');
 	include('lib_json.php');
 
+	plan(11);
 
-	#
-	# let the tests begin!
-	#
+	# simple stuff with no transformation
+	is_deeply(json_decode_loose('[1,2]'), array(1,2));
+	
+	# missing values in arrays
+	is_deeply(json_decode_loose('[,2]'), array(null,2));
+	is_deeply(json_decode_loose('[1,]'), array(1));
+	is_deeply(json_decode_loose('[1,,2]'), array(1,null,2));
 
-	class JSONLooseTests extends UnitTestCase {
+	# missing values in hashes
+	is_deeply(json_decode_loose('{,"a":2}'), array('a' => 2));
+	is_deeply(json_decode_loose('{"a":1, , "b":2}'), array('a' => 1, 'b' => 2));
+	is_deeply(json_decode_loose('{"a":1, "b":2 , }'), array('a' => 1, 'b' => 2));
 
-		function testStuff(){
+	# correctly double quoted strings
+	is_deeply(json_decode_loose('{"foo":"bar \' baz"}'), array("foo" => "bar ' baz"));
 
-			# simple stuff with no transformation
-			$this->checkDeep('[1,2]', array(1,2));
+	# deal with single quoted strings
+	is_deeply(json_decode_loose('{"foo":\'bar\'}'), array("foo" => "bar"));
+	is_deeply(json_decode_loose('{"foo":\'bar \\\' baz\'}'), array("foo" => "bar ' baz"));
 
-			# missing values in arrays
-			$this->checkDeep('[,2]', array(null,2));
-			$this->checkDeep('[1,]', array(1));
-			$this->checkDeep('[1,,2]', array(1,null,2));
-
-			# missing values in hashes
-			$this->checkDeep('{,"a":2}', array('a' => 2));
-			$this->checkDeep('{"a":1, , "b":2}', array('a' => 1, 'b' => 2));
-			$this->checkDeep('{"a":1, "b":2 , }', array('a' => 1, 'b' => 2));
-
-			# correctly double quoted strings
-			$this->checkDeep('{"foo":"bar \' baz"}', array("foo" => "bar ' baz"));
-
-			# deal with single quoted strings
-			$this->checkDeep('{"foo":\'bar\'}', array("foo" => "bar"));
-			$this->checkDeep('{"foo":\'bar \\\' baz\'}', array("foo" => "bar ' baz"));
-
-			# quote key names
-			$this->checkDeep('{foo:2}', array("foo" => 2));
-		}
-
-		function checkDeep($json, $target){
-			$got = serialize(json_decode_loose($json));
-			$expect = serialize($target);
-			$this->assertEqual($got, $expect);
-		}
-	}
-
+	# quote key names
+	is_deeply(json_decode_loose('{foo:2}'), array("foo" => 2));
