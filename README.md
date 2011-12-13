@@ -17,3 +17,10 @@ This library allows you to decode JavaScript objects as if they were valid JSON.
     $obj = json_decode_loose($str);
 
 If you're using <a href="https://github.com/exflickr/flamework">Flamework</a>, just drop lib_json.php into your <code>include</code> folder.
+
+## Testing
+
+If you have perl's <a href="http://search.cpan.org/dist/Test-Harness/">Test::Harness</a> installed (you almost certainly do), you can 
+run the tests using:
+
+    prove --exec 'php' t/*.t

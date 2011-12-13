@@ -1,6 +1,7 @@
 <?
-	include('testmore.php');
-	include('lib_json.php');
+	$dir = dirname(__FILE__);
+	include($dir.'/testmore.php');
+	include($dir.'/../lib_json.php');
 
 	plan(11);
 
