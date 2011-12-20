@@ -57,6 +57,19 @@
 
 
 		#
+		# turn remaning barewords into nulls.
+		# loosely based on the ECMA spec, but avoiding requiring unicode PCRE.
+		# http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf
+		# (section 7.6)
+		#
+
+		$start = "[A-Za-z\$_]|(\\\\u[0-9A-Fa-f]{4})";
+		$continue = $start.'|[0-9-]';
+
+		$json = preg_replace_callback("!(($start)($continue)*)!", 'json_bareword', $json);
+
+
+		#
 		# replace the strings
 		#
 
@@ -70,7 +83,7 @@
 		$ret = JSON_decode($json, true);
 
 		if ($ret === null){
-			die("Failed to parse JSON:\n$json");
+			die("Failed to parse JSON:\n$json\n");
 		}
 
 		return $ret;
@@ -111,4 +124,19 @@
 		$GLOBALS['json_strings'][$idx] = $m[1];
 
 		return $GLOBALS['json_str_prefix'].$idx.':';
+	}
+
+	function json_bareword($m){
+
+		# just a string token
+		if (strpos($m[1], $GLOBALS['json_str_prefix']) === 0) return $m[0];
+
+		# reserved words we allow
+		$low = StrToLower($m[1]);
+		if ($low == 'null') return 'null';
+		if ($low == 'true') return 'true';
+		if ($low == 'false') return 'false';
+
+		# otherwise it's likely a variable reference, so remove it
+		return 'null';
 	}
