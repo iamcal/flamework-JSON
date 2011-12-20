@@ -64,9 +64,22 @@
 		#
 
 		$start = "[A-Za-z\$_]|(\\\\u[0-9A-Fa-f]{4})";
-		$continue = $start.'|[0-9-]';
+		$continue = $start.'|[0-9-.]';
 
 		$json = preg_replace_callback("!(($start)($continue)*)!", 'json_bareword', $json);
+
+
+		#
+		# strip functions
+		#
+
+		$l = strlen($json);
+		while (1){
+			$json = preg_replace("!null\(([^()]*)\)!", 'null', $json);
+			$l2 = strlen($json);
+			if ($l == $l2) break;
+			$l = $l2;
+		}
 
 
 		#

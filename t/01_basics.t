@@ -3,7 +3,7 @@
 	include($dir.'/testmore.php');
 	include($dir.'/../lib_json.php');
 
-	plan(13);
+	plan(15);
 
 	# simple stuff with no transformation
 	is_deeply(json_decode_loose('[1,2]'), array(1,2));
@@ -31,3 +31,7 @@
 	# detect barewords
 	is_deeply(json_decode_loose('{"foo": bar}'), array("foo" => null));
 	is_deeply(json_decode_loose('{"foo": $bar_woo}'), array("foo" => null));
+	is_deeply(json_decode_loose('{"foo": bar.baz}'), array("foo" => null));
+
+	# functions
+	is_deeply(json_decode_loose('{"foo": bar("baz")}'), array("foo" => null));
